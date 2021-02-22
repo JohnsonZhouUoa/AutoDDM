@@ -12,6 +12,16 @@ class AutoDDM(BaseDriftDetector):
 
     def __init__(self, min_num_instances=30, warning_level=2.0, out_control_level=3.0,
                  default_prob=1, ts_length=20, confidence=0.95, tolerance = 1000, c = 0.05):
+        """ AutoDDM is a dirft detector that adjusts the drift thresholds based on prior information. We exploit the periodicity in the data stream when it exists, such that it is more sensitive to true concept drifts while reducing false-positive detections.
+        :param min_num_instances: The minimum number of instances required to start drift detection
+        :param warning_level: The level when the detector is in warning phrase.
+        :param out_control_level: The level when the detector is in concept drift phrase.
+        :param default_prob: The initial probability when drift detected and reset.
+        :param ts_length: The length of location buffer.
+        :param confidence: The default confidence level.
+        :param tolerance: The tolerance range of matching.
+        :param c: A Laplacian constant.
+        """
         super().__init__()
         self.sample_count = 1
         self.global_ratio = 1.0
@@ -60,6 +70,25 @@ class AutoDDM(BaseDriftDetector):
 
 
     def add_element(self, prediction, n):
+        """ Add a new element to the statistics
+
+        Parameters
+        ----------
+        prediction: int (either 0 or 1)
+            This parameter indicates whether the last sample analyzed was
+            correctly classified or not. 1 indicates an error (miss-classification).
+
+        n: int
+            This parameter indicates the current timestamp t.
+
+        Notes
+        -----
+        After calling this method, to verify if change was detected or if
+        the learner is in the warning zone, one should call the super method
+        detected_change, which returns True if concept drift was detected and
+        False otherwise.
+
+        """
 
         if self.in_concept_change:
             self.reset()
@@ -102,12 +131,6 @@ class AutoDDM(BaseDriftDetector):
 
         if (self.miss_prob + self.miss_std > self.miss_prob_min + self.out_control_level * self.miss_sd_min):
             self.in_concept_change = True
-            # key = min(self.actuals.keys(), key=lambda x:abs(x - n))
-            # if key != 0 and self.actuals[key] == 0 and abs(key - n) <= self.tolence:
-            #     self.drift_ts.append(n)
-            #     self.detect_TP()
-            # else:
-            #     self.detect_FP()
 
 
         if ((self.miss_prob + self.miss_std > self.pr + self.out_control_level * self.std) and (self.global_ratio > self.confidence)):
@@ -162,6 +185,9 @@ class AutoDDM(BaseDriftDetector):
         return self.miss_prob
 
     def detect_TP(self, n):
+        """ A true concept drift is detected
+        :param n: The timestamp when the true concept drift is detected
+        """
         self.drift_ts.append(n)
 
         if (len(self.drift_ts) >= self.ts_length):
@@ -181,8 +207,6 @@ class AutoDDM(BaseDriftDetector):
                 self.period = 1
             else:
                 self.period = math.floor(max(set(periods), key=periods.count))
-
-            #print("Period: " + str(self.period))
 
         if (len(self.drift_ts) > self.ts_length):
             ts = np.diff(self.drift_ts)
@@ -205,8 +229,6 @@ class AutoDDM(BaseDriftDetector):
                 hw_model = ExponentialSmoothing(temp_df, trend=None, seasonal='add', seasonal_periods=self.period).fit(
                     optimized=True)
                 predict_result = np.array(hw_model.predict(start=len(learn), end=len(learn)))[0]
-                # print("Predicted:")
-                # print(predict_result)
                 self.diff = predict_result
 
             self.ts_prediction = n + self.diff
@@ -215,6 +237,10 @@ class AutoDDM(BaseDriftDetector):
 
 
     def detect_FP(self, n):
+        """ A  false positive is detected
+        :param n: The timestamp when the false positive is detected
+        :return:
+        """
         self.diff = self.ts_prediction - n
         return
 
