@@ -1,11 +1,9 @@
 from src.detector.AutoDDM import AutoDDM
-from skmultiflow.drift_detection import DDM
 import matplotlib.pyplot as plt
 import warnings
 import time
 import numpy as np
-from skmultiflow.trees import HoeffdingTreeClassifier, HoeffdingAdaptiveTreeClassifier, \
-    ExtremelyFastDecisionTreeClassifier
+from skmultiflow.trees import HoeffdingTreeClassifier
 from guppy import hpy
 import arff
 import pandas

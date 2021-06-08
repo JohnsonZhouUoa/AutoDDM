@@ -1,12 +1,12 @@
 from src.detector.AutoDDM import AutoDDM
-from skika.data.reccurring_concept_stream import RCStreamType, RecurringConceptStream, conceptOccurence, RecurringConceptGradualStream
+from skika.data.reccurring_concept_stream import RCStreamType, RecurringConceptStream, conceptOccurence
 import matplotlib.pyplot as plt
 import warnings
 import time
 import numpy as np
 import random
 import collections
-from skmultiflow.trees import HoeffdingTreeClassifier, HoeffdingAdaptiveTreeClassifier, ExtremelyFastDecisionTreeClassifier
+from skmultiflow.trees import HoeffdingTreeClassifier
 from guppy import hpy
 import pandas
 

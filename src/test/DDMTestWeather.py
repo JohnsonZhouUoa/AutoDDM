@@ -1,18 +1,10 @@
-from src.detector.AutoDDM import AutoDDM
-from src.detector.AutoPH import AutoPageHinkley
-from skmultiflow.drift_detection import ADWIN
-from skmultiflow.drift_detection import PageHinkley
 from skmultiflow.drift_detection import DDM
-from sklearn.tree import DecisionTreeClassifier
-from skika.data.reccurring_concept_stream import RCStreamType, RecurringConceptStream, conceptOccurence, \
-    RecurringConceptGradualStream
 import matplotlib.pyplot as plt
 import warnings
 import time
 import numpy as np
 import random
-from skmultiflow.trees import HoeffdingTreeClassifier, HoeffdingAdaptiveTreeClassifier, \
-    ExtremelyFastDecisionTreeClassifier
+from skmultiflow.trees import HoeffdingTreeClassifier
 from guppy import hpy
 import arff
 import pandas
@@ -101,7 +93,7 @@ while weather_stream.has_more_samples():
                 w_ddm += 1
             if ddm.detected_change():
                 d_ddm += 1
-                ht_p = HoeffdingAdaptiveTreeClassifier()
+                ht_p = HoeffdingTreeClassifier()
                 grace_end = n_global + grace
                 detect_end = n_global + 2 * grace
         else:
