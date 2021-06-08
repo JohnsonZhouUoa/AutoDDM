@@ -23,7 +23,7 @@ DRIFT_INTERVALS = [50000]
 concepts = [0, 1, 2]
 RANDOMNESS = 100
 ignore = 0
-rounds = 30
+rounds = 3
 
 data_types = [RCStreamType.SINE, RCStreamType.AGRAWAL, RCStreamType.RBF]
 noises = [0, 0.1, 0.2, 0.3]

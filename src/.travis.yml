@@ -1,0 +1,14 @@
+language: python
+
+# command to install dependencies
+install:
+  - pip install -r requirements.txt
+  - pip install .
+
+script:
+  - python3 /src/test/AutoDDMTestWeather.py
+  - python3 /src/test/DDMTestWeather.py
+  - python3 /src/test/AutoTestElectricityData.py
+  - python3 /src/test/DDMTestElectricityData.py
+  - python3 /src/test/testAutoDDMnoise.py
+  - python3 /src/test/testDDMnoise.py
