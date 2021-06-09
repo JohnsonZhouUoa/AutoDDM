@@ -8,9 +8,9 @@ install: pip install -r requirements.txt  # all three OSes agree about 'pip3'
 # 'python' points to Python 2.7 on macOS but points to Python 3.8 on Linux and Windows
 # 'python3' is a 'command not found' error on Windows but 'py' works on Windows only
 script:
-  - python3 src/test/AutoDDMTestWeather.py || python src/test/AutoDDMTestWeather.py
-  - python3 src/test/DDMTestWeather.py || python src/test/DDMTestWeather.py
-  - python3 src/test/AutoTestElectricityData.py || python src/test/AutoTestElectricityData.py
-  - python3 src/test/DDMTestElectricityData.py || python src/test/DDMTestElectricityData.py
-  - python3 src/test/testAutoDDMnoise.py || python src/test/testAutoDDMnoise.py
-  - python3 src/test/testDDMnoise.py || python src/test/testDDMnoise.py
+  - python3 AutoDDMTestWeather.py || python AutoDDMTestWeather.py
+  - python3 DDMTestWeather.py || python DDMTestWeather.py
+  - python3 AutoTestElectricityData.py || python AutoTestElectricityData.py
+  - python3 DDMTestElectricityData.py || python DDMTestElectricityData.py
+  - python3 testAutoDDMnoise.py || python testAutoDDMnoise.py
+  - python3 testDDMnoise.py || python testDDMnoise.py
