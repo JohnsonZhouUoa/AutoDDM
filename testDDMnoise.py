@@ -175,7 +175,9 @@ for a in data_types:
                             print("A false positive detected at " + str(n_global))
                             FP_mine.append(drift_point)
                 ht.partial_fit(X_test, y_test)
-                print("N_global: " + str(n_global))
+                if n_global % 10000 == 0:
+                    # For Travis CI
+                    print("N_global: " + str(n_global))
             x = h.heap()
             mem_mine.append(x.size)
 
