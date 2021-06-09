@@ -104,6 +104,7 @@ while elec_stream.has_more_samples():
     if ht_p is not None:
         ht_p.partial_fit(X_test, y_test)
     ht.partial_fit(X_test, y_test)
+    print("N_global: " + str(n_global))
 x = h.heap()
 mem_ddm.append(x.size)
 
