@@ -1,4 +1,4 @@
-from src.detector.AutoDDM import AutoDDM
+from AutoDDM import AutoDDM
 from skika.data.reccurring_concept_stream import RCStreamType, RecurringConceptStream, conceptOccurence
 import matplotlib.pyplot as plt
 import warnings

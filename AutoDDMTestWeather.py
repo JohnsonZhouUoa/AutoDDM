@@ -1,4 +1,4 @@
-from src.detector.AutoDDM import AutoDDM
+from AutoDDM import AutoDDM
 import matplotlib.pyplot as plt
 import warnings
 import time
@@ -16,28 +16,26 @@ plt.style.use("seaborn-whitegrid")
 TRAINING_SIZE = 1
 grace = 1000
 tolerance = 500
+ignore = 0
+
+weather_data = arff.load('weatherAUS.arff')
+weather_df = pandas.DataFrame(weather_data)
 
 
-elec_data = arff.load("elecNormNew.arff")
-elec_df = pandas.DataFrame(elec_data)
-elec_df.columns = ['date', 'day', 'period', 'nswprice', 'nswdemand', 'vicprice', 'vicdemand', 'transfer', 'class']
-mapping = {"day":{"1":1, "2":2, "3":3, "4":4, "5":5, "6":6, "7":7}, "class": {"UP": 0, "DOWN": 1}}
-elec_df = elec_df.replace(mapping)
+weather_full_df = pandas.concat([weather_df] * 150)
 
-elec_full_df = pandas.concat([elec_df] * 200)
+STREAM_SIZE = weather_full_df.shape[0]
 
-STREAM_SIZE = elec_full_df.shape[0]
+weather_stream = DataStream(weather_full_df, name="weather")
+weather_stream.prepare_for_use()
 
-elec_stream = DataStream(elec_full_df, name="elec")
-elec_stream.prepare_for_use()
-
-X_train, y_train = elec_stream.next_sample(TRAINING_SIZE)
+X_train, y_train = weather_stream.next_sample(TRAINING_SIZE)
 
 ht = HoeffdingTreeClassifier()
 
 ht.partial_fit(X_train, y_train)
 
-n_global = TRAINING_SIZE  # Cumulative Number of observations
+n_global = ignore + TRAINING_SIZE  # Cumulative Number of observations
 d_ddm = 0
 w_ddm = 0
 TP_ddm = []
@@ -61,25 +59,18 @@ pred_grace_ht = []
 pred_grace_ht_p = []
 ht_p = None
 ML_accuracy = 0
-acc_x = []
-acc_y = []
-drift_x = []
-drift_y = []
 
 ddm = AutoDDM(tolerance=tolerance)
 h = hpy()
-while elec_stream.has_more_samples():
+while weather_stream.has_more_samples():
     n_global += 1
 
-    X_test, y_test = elec_stream.next_sample()
+    X_test, y_test = weather_stream.next_sample()
     y_predict = ht.predict(X_test)
 
     ddm_start_time = time.time()
     ddm.add_element(y_test != y_predict, n_global)
     ML_accuracy += 1 if y_test == y_predict else 0
-    if (n_global % 100 == 0):
-        acc_x.append(n_global)
-        acc_y.append(ML_accuracy/n_global)
     ddm_running_time = time.time() - ddm_start_time
     RT_ddm.append(ddm_running_time)
     if (n_global > grace_end):
@@ -93,8 +84,6 @@ while elec_stream.has_more_samples():
                     TP_ddm.append(drift_point)
                     ddm.detect_TP(drift_point)
                     ht = ht_p
-                    drift_x.append(n_global)
-                    drift_y.append(ML_accuracy/n_global)
                 else:
                     print("FP detected at: " + str(drift_point))
                     FP_ddm.append(drift_point)
@@ -125,8 +114,3 @@ print("FP by ddm:" + str(len(FP_ddm)))
 print("Mean RT  %s seconds" % np.mean((ddm_running_time)))
 print("Mean Memory by ddm:" + str(mem_ddm))
 print("Accuracy by DDM:" + str(ML_accuracy / STREAM_SIZE))
-
-plt.plot(acc_x, acc_y, color='black')
-plt.scatter(drift_x, drift_y, edgecolors='red')
-plt.show()
-
