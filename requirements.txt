@@ -151,7 +151,6 @@ pyparsing==2.4.6
 pyrfr==0.8.0
 pyrsistent==0.15.7
 PySocks==1.7.1
-pystream==1.0
 pytest==5.3.5
 pytest-arraydiff==0.3
 pytest-astropy==0.8.0
