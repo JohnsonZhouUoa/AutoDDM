@@ -12,5 +12,3 @@ script:
   - python3 DDMTestWeather.py || python DDMTestWeather.py
   - python3 AutoTestElectricityData.py || python AutoTestElectricityData.py
   - python3 DDMTestElectricityData.py || python DDMTestElectricityData.py
-  - python3 testAutoDDMnoise.py || python testAutoDDMnoise.py
-  - python3 testDDMnoise.py || python testDDMnoise.py
