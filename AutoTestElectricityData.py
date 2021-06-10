@@ -118,7 +118,12 @@ while elec_stream.has_more_samples():
     ht.partial_fit(X_test, y_test)
     if n_global % 10000 == 0:
         # For Travis CI
+        # Remove when run locally
         print("N_global: " + str(n_global))
+    if n_global > 1000000:
+        # For Travis CI
+        # Remove when run locally
+        break
 x = h.heap()
 mem_ddm.append(x.size)
 
